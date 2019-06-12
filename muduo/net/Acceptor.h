@@ -51,10 +51,10 @@ namespace muduo
             void handleRead();
 
             EventLoop* loop_;
-            Socket acceptSocket_;
-            Channel acceptChannel_;
+            Socket acceptSocket_;                               // RAII, listing socket
+            Channel acceptChannel_;                             // 一个channel对应一个描述符，对应acceptSocket_，观察socket可写，然后调用handleRead
             NewConnectionCallback newConnectionCallback_;
-            bool listenning_;
+            bool listenning_;                                   //是否在监听
             int idleFd_;
         };
 

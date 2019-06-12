@@ -110,7 +110,7 @@ void PollPoller::updateChannel(Channel* channel)//修改监听描述符和对应
   }
 }
 
-void PollPoller::removeChannel(Channel* channel)
+void PollPoller::removeChannel(Channel* channel)   //某个描述符删除，则删除对应的channel
 {
   Poller::assertInLoopThread();
   LOG_TRACE << "fd = " << channel->fd();

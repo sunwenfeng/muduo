@@ -17,11 +17,11 @@ using namespace muduo;
 using namespace muduo::net;
 
 EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseLoop, const string& nameArg)
-  : baseLoop_(baseLoop),
-    name_(nameArg),
-    started_(false),
-    numThreads_(0),
-    next_(0)
+        : baseLoop_(baseLoop),
+          name_(nameArg),
+          started_(false),
+          numThreads_(0),
+          next_(0)
 {
 }
 
@@ -37,7 +37,7 @@ void EventLoopThreadPool::start(const ThreadInitCallback& cb)
 
   started_ = true;
 
-  for (int i = 0; i < numThreads_; ++i)
+  for (int i = 0; i < numThreads_; ++i)  //创建numThreads_个EventLoopThread，创建完之后，每个线程已经在执行EventLoop::loop
   {
     char buf[name_.size() + 32];
     snprintf(buf, sizeof buf, "%s%d", name_.c_str(), i);
@@ -57,7 +57,7 @@ EventLoop* EventLoopThreadPool::getNextLoop()
   assert(started_);
   EventLoop* loop = baseLoop_;
 
-  if (!loops_.empty())
+  if (!loops_.empty())//每次返回一个新的eventloop，也就是一个eventloop值对应一个新的连接，连接断开后eventloop不再复用
   {
     // round-robin
     loop = loops_[next_];

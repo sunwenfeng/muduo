@@ -68,7 +68,7 @@ void EventLoopThread::threadFunc()
   {
     MutexLockGuard lock(mutex_);
     loop_ = &loop;
-    cond_.notify();                 //创建eventloop对象后，通过条件变量唤醒startloop，但startloop在何处执行？？
+    cond_.notify();                 //创建eventloop对象后，通过条件变量唤醒startloop
   }
 
   loop.loop();

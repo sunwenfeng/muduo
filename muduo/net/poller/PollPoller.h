@@ -41,7 +41,7 @@ namespace muduo
                                     ChannelList* activeChannels) const;
 
             typedef std::vector<struct pollfd> PollFdList;
-            PollFdList pollfds_;   //当前监听的事件集合
+            PollFdList pollfds_;                            //当前监听的事件集合
         };
 
     }  // namespace net

@@ -25,11 +25,11 @@ using namespace muduo::net;
 namespace
 {
 
-typedef struct sockaddr SA;
+    typedef struct sockaddr SA;
 
 
 #if VALGRIND || defined (NO_ACCEPT4)
-void setNonBlockAndCloseOnExec(int sockfd)
+    void setNonBlockAndCloseOnExec(int sockfd)
 {
   // non-block
   int flags = ::fcntl(sockfd, F_GETFL, 0);
@@ -86,6 +86,7 @@ int sockets::createNonblockingOrDie(sa_family_t family)
   setNonBlockAndCloseOnExec(sockfd);
 #else
   int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
+  //创建非阻塞socket描述符
   if (sockfd < 0)
   {
     LOG_SYSFATAL << "sockets::createNonblockingOrDie";
@@ -97,6 +98,7 @@ int sockets::createNonblockingOrDie(sa_family_t family)
 void sockets::bindOrDie(int sockfd, const struct sockaddr* addr)
 {
   int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+  //bind操作为socket描述符分配地址和端口，只有服务器需要，客户端采用匿名方式，由操作系统分配就可以了
   if (ret < 0)
   {
     LOG_SYSFATAL << "sockets::bindOrDie";
@@ -105,7 +107,7 @@ void sockets::bindOrDie(int sockfd, const struct sockaddr* addr)
 
 void sockets::listenOrDie(int sockfd)
 {
-  int ret = ::listen(sockfd, SOMAXCONN);
+  int ret = ::listen(sockfd, SOMAXCONN);   //将socket转换成监听套接字，创建监听队列
   if (ret < 0)
   {
     LOG_SYSFATAL << "sockets::listenOrDie";
@@ -120,7 +122,7 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
   setNonBlockAndCloseOnExec(connfd);
 #else
   int connfd = ::accept4(sockfd, sockaddr_cast(addr),
-                         &addrlen, SOCK_NONBLOCK | SOCK_CLOEXEC);
+                         &addrlen, SOCK_NONBLOCK | SOCK_CLOEXEC);   //非阻塞accept
 #endif
   if (connfd < 0)
   {
@@ -136,7 +138,7 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
       case EMFILE: // per-process lmit of open file desctiptor ???
         // expected errors
         errno = savedErrno;
-        break;
+            break;
       case EBADF:
       case EFAULT:
       case EINVAL:
@@ -147,10 +149,10 @@ int sockets::accept(int sockfd, struct sockaddr_in6* addr)
       case EOPNOTSUPP:
         // unexpected errors
         LOG_FATAL << "unexpected error of ::accept " << savedErrno;
-        break;
+            break;
       default:
         LOG_FATAL << "unknown error of ::accept " << savedErrno;
-        break;
+            break;
     }
   }
   return connfd;
@@ -290,12 +292,12 @@ bool sockets::isSelfConnect(int sockfd)
     const struct sockaddr_in* laddr4 = reinterpret_cast<struct sockaddr_in*>(&localaddr);
     const struct sockaddr_in* raddr4 = reinterpret_cast<struct sockaddr_in*>(&peeraddr);
     return laddr4->sin_port == raddr4->sin_port
-        && laddr4->sin_addr.s_addr == raddr4->sin_addr.s_addr;
+           && laddr4->sin_addr.s_addr == raddr4->sin_addr.s_addr;
   }
   else if (localaddr.sin6_family == AF_INET6)
   {
     return localaddr.sin6_port == peeraddr.sin6_port
-        && memcmp(&localaddr.sin6_addr, &peeraddr.sin6_addr, sizeof localaddr.sin6_addr) == 0;
+           && memcmp(&localaddr.sin6_addr, &peeraddr.sin6_addr, sizeof localaddr.sin6_addr) == 0;
   }
   else
   {

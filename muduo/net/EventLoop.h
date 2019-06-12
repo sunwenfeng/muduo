@@ -69,6 +69,7 @@ namespace muduo
             /// If in the same loop thread, cb is run within the function.
             /// Safe to call from other threads.
             // 在eventloop的IO线程内执行某个任务回调cb,也就是说在eventloop中有不同的执行方式，包括loop，runInloop，定时等
+            // 由于循环可能在阻塞，则runInloop唤醒线程，直接执行函数cb
             void runInLoop(Functor cb);
             /// Queues callback in the loop thread.
             /// Runs after finish pooling.
@@ -106,7 +107,7 @@ namespace muduo
              * */
             void wakeup();                              //对wakeupFd_写入数据
             void updateChannel(Channel* channel);
-            void removeChannel(Channel* channel);
+            void removeChannel(Channel* channel);       //用于删除连接
             bool hasChannel(Channel* channel);
 
             // pid_t threadId() const { return threadId_; }

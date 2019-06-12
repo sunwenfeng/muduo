@@ -31,6 +31,7 @@ namespace muduo
 ///
 /// It closes the sockfd when desctructs.
 /// It's thread safe, all operations are delagated to OS.
+        //只是封装一个socket描述符
         class Socket : noncopyable
         {
         public:
@@ -80,7 +81,7 @@ namespace muduo
             void setKeepAlive(bool on);
 
         private:
-            const int sockfd_;
+            const int sockfd_;    //文件描述符ID，由socketsOps创建后传入
         };
 
     }  // namespace net

@@ -34,7 +34,7 @@ namespace muduo
         {
         public:
             typedef std::function<void()> EventCallback;
-            typedef std::function<void(Timestamp)> ReadEventCallback;
+            typedef std::function<void(Timestamp)> f;
 
             Channel(EventLoop* loop, int fd);
             ~Channel();
@@ -95,8 +95,8 @@ namespace muduo
             static const int kReadEvent;
             static const int kWriteEvent;
 
-            EventLoop* loop_;
-            const int  fd_;
+            EventLoop* loop_;     //channel对应的eventloop
+            const int  fd_;       //channel对应的描述符
             int        events_;
             int        revents_; // it's the received event types of epoll or poll
             int        index_; // used by Poller.当前channel对应的描述符在poller中监听描述符集合中的的索引

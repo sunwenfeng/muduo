@@ -68,15 +68,17 @@ namespace muduo
             /// It wakes up the loop, and run the cb.
             /// If in the same loop thread, cb is run within the function.
             /// Safe to call from other threads.
+            // 在eventloop的IO线程内执行某个任务回调cb,也就是说在eventloop中有不同的执行方式，包括loop，runInloop，定时等
             void runInLoop(Functor cb);
             /// Queues callback in the loop thread.
             /// Runs after finish pooling.
             /// Safe to call from other threads.
+            //将cb放入队列，并在必要时唤醒IO线程
             void queueInLoop(Functor cb);
 
             size_t queueSize() const;
 
-            // timers
+            // timers,3中定时执行方式
 
             ///
             /// Runs callback at 'time'.
@@ -100,12 +102,15 @@ namespace muduo
             void cancel(TimerId timerId);
 
             // internal usage
-            void wakeup();
+            /* IO线程一般会阻塞在loop的poll调用中，为了让IO线程能够立刻执行用户回调，我们需要设法唤醒他。
+             * */
+            void wakeup();                              //对wakeupFd_写入数据
             void updateChannel(Channel* channel);
             void removeChannel(Channel* channel);
             bool hasChannel(Channel* channel);
 
             // pid_t threadId() const { return threadId_; }
+            // 判断当前线程和eventloop对象创建时的线程是否一致，不一致则退出，进一步保证eventloop对象只能在一个线程中使用
             void assertInLoopThread()
             {
                 if (!isInLoopThread())
@@ -130,34 +135,34 @@ namespace muduo
 
         private:
             void abortNotInLoopThread();
-            void handleRead();  // waked up
+            void handleRead();                                  // waked up，对wakeupFd读出数据
             void doPendingFunctors();
 
-            void printActiveChannels() const; // DEBUG
+            void printActiveChannels() const;                   // DEBUG
 
             typedef std::vector<Channel*> ChannelList;
 
-            bool looping_; /* atomic */
-            std::atomic<bool> quit_;
-            bool eventHandling_; /* atomic */
-            bool callingPendingFunctors_; /* atomic */
+            bool looping_;                                      /* atomic */
+            std::atomic<bool> quit_;                            //控制eventloop的循环是否终止
+            bool eventHandling_;                                /* atomic */
+            bool callingPendingFunctors_;                       /* atomic */
             int64_t iteration_;
-            const pid_t threadId_;    //线程id
+            const pid_t threadId_;                              //线程id
             Timestamp pollReturnTime_;
             std::unique_ptr<Poller> poller_;
             std::unique_ptr<TimerQueue> timerQueue_;
             int wakeupFd_;
             // unlike in TimerQueue, which is an internal class,
             // we don't expose Channel to client.
-            std::unique_ptr<Channel> wakeupChannel_;
+            std::unique_ptr<Channel> wakeupChannel_;            //处理wakeupFd上的readble事件，将事件分发至handleRead
             boost::any context_;
 
             // scratch variables
-            ChannelList activeChannels_;
+            ChannelList activeChannels_;                        //poll返回的当前就绪的描述符
             Channel* currentActiveChannel_;
 
             mutable MutexLock mutex_;
-            std::vector<Functor> pendingFunctors_ GUARDED_BY(mutex_);
+            std::vector<Functor> pendingFunctors_;   ///GUARDED_BY(mutex_);
         };
 
     }  // namespace net

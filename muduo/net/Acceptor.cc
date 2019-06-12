@@ -23,18 +23,18 @@ using namespace muduo;
 using namespace muduo::net;
 
 Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reuseport)
-  : loop_(loop),
-    acceptSocket_(sockets::createNonblockingOrDie(listenAddr.family())),
-    acceptChannel_(loop, acceptSocket_.fd()),
-    listenning_(false),
-    idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
+        : loop_(loop),
+          acceptSocket_(sockets::createNonblockingOrDie(listenAddr.family())),
+          acceptChannel_(loop, acceptSocket_.fd()),
+          listenning_(false),
+          idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
 {
   assert(idleFd_ >= 0);
   acceptSocket_.setReuseAddr(true);
   acceptSocket_.setReusePort(reuseport);
   acceptSocket_.bindAddress(listenAddr);
   acceptChannel_.setReadCallback(
-      std::bind(&Acceptor::handleRead, this));
+          std::bind(&Acceptor::handleRead, this));
 }
 
 Acceptor::~Acceptor()

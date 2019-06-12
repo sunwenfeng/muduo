@@ -30,8 +30,8 @@ namespace muduo
 /// This class doesn't own the Channel object
 
         // muduo支持两种IO复用，所以在这定义一个基类
-        //poller并不拥有channel，channel在析构之前必须自己unregister
-        //poller是eventloop的间接成员
+        // poller并不拥有channel，channel在析构之前必须自己unregister
+        // poller是eventloop的间接成员
         class Poller : noncopyable
         {
         public:

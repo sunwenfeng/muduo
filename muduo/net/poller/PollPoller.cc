@@ -27,7 +27,7 @@ PollPoller::PollPoller(EventLoop* loop)
 PollPoller::~PollPoller() = default;
 
 Timestamp PollPoller::poll(int timeoutMs, ChannelList* activeChannels)
-{
+{//poller的核心函数，调用poll返回就绪的描述符
   // XXX pollfds_ shouldn't change
   int numEvents = ::poll(&*pollfds_.begin(), pollfds_.size(), timeoutMs);
   int savedErrno = errno;

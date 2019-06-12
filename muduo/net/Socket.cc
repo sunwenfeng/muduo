@@ -38,9 +38,9 @@ bool Socket::getTcpInfoString(char* buf, int len) const
   if (ok)
   {
     snprintf(buf, len, "unrecovered=%u "
-             "rto=%u ato=%u snd_mss=%u rcv_mss=%u "
-             "lost=%u retrans=%u rtt=%u rttvar=%u "
-             "sshthresh=%u cwnd=%u total_retrans=%u",
+                     "rto=%u ato=%u snd_mss=%u rcv_mss=%u "
+                     "lost=%u retrans=%u rtt=%u rttvar=%u "
+                     "sshthresh=%u cwnd=%u total_retrans=%u",
              tcpi.tcpi_retransmits,  // Number of unrecovered [RTO] timeouts
              tcpi.tcpi_rto,          // Retransmit timeout in usec
              tcpi.tcpi_ato,          // Predicted tick of soft clock in usec

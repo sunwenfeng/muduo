@@ -111,7 +111,7 @@ void EventLoop::loop()   //eventloop循环，必须在IO线程执行
     while (!quit_)
     {
         activeChannels_.clear();
-        pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+        pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);//阻塞在poll调用中，然后通过引用返回当前就绪的描述符
         ++iteration_;
         if (Logger::logLevel() <= Logger::TRACE)
         {
@@ -119,14 +119,14 @@ void EventLoop::loop()   //eventloop循环，必须在IO线程执行
         }
         // TODO sort channel by priority
         eventHandling_ = true;
-        for (Channel* channel : activeChannels_)
+        for (Channel* channel : activeChannels_)//依次调用handleEvent，一个channel对应一个文件描述符，也就是依次处理每个就绪的文件描述符
         {
             currentActiveChannel_ = channel;
             currentActiveChannel_->handleEvent(pollReturnTime_);
         }
         currentActiveChannel_ = NULL;
         eventHandling_ = false;
-        doPendingFunctors();
+        doPendingFunctors();                     //执行pendingFunctors中的任务回调
     }
 
     LOG_TRACE << "EventLoop " << this << " stop looping";
@@ -139,6 +139,8 @@ void EventLoop::quit()
     // There is a chance that loop() just executes while(!quit_) and exits,
     // then EventLoop destructs, then we are accessing an invalid object.
     // Can be fixed using mutex_ in both places.
+
+    //在必要时唤醒IO线程，让它及时终止循环
     if (!isInLoopThread())
     {
         wakeup();
@@ -199,7 +201,7 @@ void EventLoop::cancel(TimerId timerId)
 }
 
 void EventLoop::updateChannel(Channel* channel)
-{
+{//也就是更新channel对应的描述符监听事件
     assert(channel->ownerLoop() == this);
     assertInLoopThread();
     poller_->updateChannel(channel);

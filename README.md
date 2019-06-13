@@ -1,6 +1,3 @@
-# muduo
-muduo阅读
-****
 ## muduo分析
 在一个完整的网络框架中，需要考虑网络socket事件，信号，定时。muduo采用one loop per thread + thread pool的方式实现。首先只分析单个Reactor下
 网络socket事件的实现。也就是服务器的监听以及新连接的处理都在reactor线程进行。

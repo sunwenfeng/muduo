@@ -17,5 +17,14 @@ int main()
 1. 初始化一个EventLoop作为reactor驱动器。
 2. 初始化一个TcpServer并设置业务逻辑处理回调函数。定义TcpServer时定义了Acceptor对象，并执行了服务端套接字的socket()和bind()操作。
 3. 调用TcpServer::start()，执行服务端套接字的listen()，并将服务端套接字的read事件写入到Poller（处理IO复用）的关注的描述符列表中。
-4. 调用EventLoop::loop()进行事件循环。loop()函数调用Poller获取当前就绪的描述符，也就是channel，然后调用channel::handleEvent()根据不同的就绪事件
-调用不同的回调函数进行处理。
+4. 调用EventLoop::loop()进行事件循环。loop()函数调用Poller获取当前就绪的描述符，然后调用channel::handleEvent()根据不同的就绪事件
+调用不同的回调函数进行处理。  
+
+此时Poller关注的描述符只有监听描述符，当监听描述符可写之后，表明收到了客户端的连接，channel::handleEvent()进行处理，由于是描述符可写事件，
+调用写回调函数readCallback，也就是Acceptor::handleRead。在这个回调函数中，创建TcpConnection对象管理新连接，并把这个新连接的描述符加入到
+Poller关注的描述符列表中。  
+
+这样，不论是客户端请求监听描述符的新连接，还是在已连接描述符上的读写事件，EventLoop事件驱动器都能从容应对。
+
+***
+

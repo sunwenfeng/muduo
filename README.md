@@ -21,7 +21,7 @@ int main()
 调用不同的回调函数进行处理。  
 
     此时Poller关注的描述符只有监听描述符，当监听描述符可写之后，表明收到了客户端的连接，channel::handleEvent()进行处理，由于是描述符可写事件，
-调用写回调函数readCallback，也就是Acceptor::handleRead。在这个回调函数中，创建TcpConnection对象管理新连接，并把这个新连接的描述符加入到
+调用写回调函数readCallback。在这个回调函数中，创建TcpConnection对象管理新连接，并把这个新连接的描述符加入到
 Poller关注的描述符列表中。  
 
 这样，不论是客户端请求监听描述符的新连接，还是在已连接描述符上的读写事件，EventLoop事件驱动器都能从容应对。

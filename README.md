@@ -20,7 +20,7 @@ int main()
 4. 调用EventLoop::loop()进行事件循环。loop()函数调用Poller获取当前就绪的描述符，然后调用channel::handleEvent()根据不同的就绪事件
 调用不同的回调函数进行处理。  
 
-此时Poller关注的描述符只有监听描述符，当监听描述符可写之后，表明收到了客户端的连接，channel::handleEvent()进行处理，由于是描述符可写事件，
+    此时Poller关注的描述符只有监听描述符，当监听描述符可写之后，表明收到了客户端的连接，channel::handleEvent()进行处理，由于是描述符可写事件，
 调用写回调函数readCallback，也就是Acceptor::handleRead。在这个回调函数中，创建TcpConnection对象管理新连接，并把这个新连接的描述符加入到
 Poller关注的描述符列表中。  
 

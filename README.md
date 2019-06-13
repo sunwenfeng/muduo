@@ -1,4 +1,5 @@
 ## muduo分析
+### 整体流程
 在一个完整的网络框架中，需要考虑网络socket事件，信号，定时。muduo采用one loop per thread + thread pool的方式实现。首先只分析单个Reactor下
 网络socket事件的实现。也就是服务器的监听以及新连接的处理都在reactor线程进行。
 
@@ -27,22 +28,11 @@ Poller关注的描述符列表中。
 这样，不论是客户端请求监听描述符的新连接，还是在已连接描述符上的读写事件，EventLoop事件驱动器都能从容应对。
 
 ***
+### 主要的类
 上述过程中，主流程涉及到以下几个类：TcpServer,Acceptor,TcpConnection,Channel,EventLoop,Poller。其他都是一些辅助类。  
+#### TcpServer
 TcpServer用于建立Tcp服务器，生命期由用户控制。通过unique_ptr通过Acceptor来管理监听套接字；服务器还需要知道建立的所有的socket连接，所以TcpServer还包含一个TcpConnection的指针(shared_ptr)集合(ConnectionMap)。
 TcpServer中定义的回调函数有：
-
-表头1  | 表头2|
---------- | --------|
-表格单元  | 表格单元 |
-表格单元  | 表格单元 |
-
-| 表头1  | 表头2|
-| ---------- | -----------|
-| 表格单元   | 表格单元   |
-| 表格单元   | 表格单元   |
-
-### 对齐
-表格可以指定对齐方式
 
 | 回调函数 | 赋值  | 作用 |
 | :--------------------: |:------------:| :------------------:|

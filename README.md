@@ -33,7 +33,8 @@ Poller关注的描述符列表中。
 #### TcpServer
 * TcpServer用于建立Tcp服务器，生命期由用户控制。通过unique_ptr通过Acceptor来管理监听套接字；服务器还需要知道建立的所有的socket连接，所以TcpServer还包含一个TcpConnection的指针(shared_ptr)集合(ConnectionMap)。  
 * TcpServer::start()调用Acceptor::listen()
-* TcpServer::newConnection赋给Acceptor的回调函数newConnectionCallback_，生成TcpConnection对象管理已连接套接字
+* TcpServer::newConnection赋给Acceptor的回调函数newConnectionCallback_，生成TcpConnection对象管理已连接套接字  
+
 TcpServer中定义的回调函数有：
 
 | 回调函数 | 赋值  | 作用 |
@@ -45,13 +46,32 @@ TcpServer中定义的回调函数有：
 * Acceptor用户管理监听套接字，生命期由TcpServer控制，TcpServer的构造函数中生成。Acceptor通过Socket对象管理监听socket（RAII），还包含一个channel，这个channel的生命期由Acceptor管理。还包括一个所属EventLoop的指针
 * 构造函数执行套接字的socket()和bind()操作，并设置回调函数的具体调用
 * Acceptor::listen()执行套接字的listen(),调用Channel::enableReading()将监听套接字的read事件加入Poller的关注列表
-* Acceptor::handleRead()执行套接字的accept，并调用回调函数newConnectionCallback_
+* Acceptor::handleRead()执行套接字的accept，并调用回调函数newConnectionCallback_  
+
 Acceptor的回调函数有：
 
 | 回调函数 | 赋值  | 作用 |
 | :-----------------------: |:-----------------------------:| :---------------------------------------------:|
 | newConnectionCallback_    | TcpServer::newConnection      | accept返回后创建TcpConnection对象管理已连接描述符 |
  #### TcpConnection
+ * TcpConnection用于管理已连接描述符，在Acceptor的newConnectionCallback_回调中创建，并用shared_ptr管理，用unique_ptr管理channel，用unique_ptr通过RAII管理已连接描述符。  
+ 
+ TcpConnection的回调函数有：
+ | 回调函数 | 赋值  | 作用 |
+| :-----------------------: |:----------------------------------:| :-----------:|
+| connectionCallback_    | TcpServer:: connectionCallback_      |  |
+| messageCallback_    | TcpServer:: messageCallback_    |  |
+| writeCompleteCallback_    | TcpServer:: writeCompleteCallback_     |  |
+| highWaterMarkCallback_    | TcpServer::newConnection      |  |
+| closeCallback_    | TcpServer::removeConnection    |  |
+
+
+
+***
+### 建立连接
+
+***
+### 断开连接
  
 
 

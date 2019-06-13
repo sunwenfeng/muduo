@@ -48,9 +48,11 @@ Acceptor::listen()执行套接字的listen(),调用Channel::enableReading()将�
 Acceptor::handleRead()执行套接字的accept，并调用回调函数newConnectionCallback_
 Acceptor的回调函数有：
 
-| 回调函数 | 赋值  | 作用 |  
-| :-------------------- : |:----------------------------:| :------------------------------------------------:|
-| newConnectionCallback_    | TcpServer::newConnection    | accept返回后创建TcpConnection对象管理已连接描述符 |
+| 回调函数 | 赋值  | 作用 |
+| :-----------------------: |:-----------------------------:| :---------------------------------------------:|
+| newConnectionCallback_    | TcpServer::newConnection      | accept返回后创建TcpConnection对象管理已连接描述符 |
+
+
 
 
 

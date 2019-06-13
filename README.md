@@ -56,7 +56,8 @@ Acceptor的回调函数有：
  #### TcpConnection
  * TcpConnection用于管理已连接描述符，在Acceptor的newConnectionCallback_回调中创建，并用shared_ptr管理，用unique_ptr管理channel，用unique_ptr通过RAII管理已连接描述符。  
  
- TcpConnection的回调函数有：
+ TcpConnection的回调函数有：  
+ 
  | 回调函数 | 赋值  | 作用 |
 | :-----------------------: |:----------------------------------:| :-----------:|
 | connectionCallback_    | TcpServer:: connectionCallback_      |  |

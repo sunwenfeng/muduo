@@ -102,7 +102,8 @@ namespace muduo
             EventLoop* loop_;                                 // the acceptor loop，只有一个acceptor
             const string ipPort_;
             const string name_;
-            std::unique_ptr<Acceptor> acceptor_;              // avoid revealing Acceptor
+            std::unique_ptr<Acceptor> acceptor_;
+            // avoid revealing Acceptor，通过acceptor_指针将TcpServer::newConnection绑定到Acceptor的回调函数
             std::shared_ptr<EventLoopThreadPool> threadPool_;
             ConnectionCallback connectionCallback_;
             MessageCallback messageCallback_;
@@ -111,7 +112,7 @@ namespace muduo
             AtomicInt32 started_;
             // always in loop thread
             int nextConnId_;
-            ConnectionMap connections_;
+            ConnectionMap connections_;                     //保存TcpServer上的所有socket连接，只是指针，TcpConnection的所有权不在TcpServer
         };
 
     }  // namespace net

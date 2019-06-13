@@ -50,7 +50,7 @@ void Acceptor::listen()
   loop_->assertInLoopThread();
   listenning_ = true;
   acceptSocket_.listen();                   //执行listen
-  acceptChannel_.enableReading();
+  acceptChannel_.enableReading();           //将监听描述符的read事件加入监听
 }
 
 void Acceptor::handleRead()

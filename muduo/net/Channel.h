@@ -97,9 +97,9 @@ namespace muduo
 
             EventLoop* loop_;     //channel对应的eventloop
             const int  fd_;       //channel对应的描述符
-            int        events_;
-            int        revents_; // it's the received event types of epoll or poll
-            int        index_; // used by Poller.当前channel对应的描述符在poller中监听描述符集合中的的索引
+            int        events_;   //channel监听该描述符的事件
+            int        revents_;  // it's the received event types of epoll or poll
+            int        index_;    // used by Poller.当前channel对应的描述符在poller中监听描述符集合中的的索引
             bool       logHup_;
 
             std::weak_ptr<void> tie_;

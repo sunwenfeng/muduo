@@ -51,6 +51,8 @@ namespace muduo
             void handleRead();
 
             EventLoop* loop_;
+            // Acceptor依赖于TcpServer，Acceptor和TcpServer属于同一个eventloop，Eventloop指针主要用来检查
+            // assertInLoopThread
             Socket acceptSocket_;                               // RAII, listing socket
             Channel acceptChannel_;                             // 一个channel对应一个描述符，对应acceptSocket_，观察socket可写，然后调用handleRead
             NewConnectionCallback newConnectionCallback_;

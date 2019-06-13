@@ -142,7 +142,7 @@ namespace muduo
             const InetAddress localAddr_;
             const InetAddress peerAddr_;
             ConnectionCallback connectionCallback_;
-            MessageCallback messageCallback_;
+            MessageCallback messageCallback_;            //实现业务逻辑的回调函数
             WriteCompleteCallback writeCompleteCallback_;
             HighWaterMarkCallback highWaterMarkCallback_;
             CloseCallback closeCallback_;

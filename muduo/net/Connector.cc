@@ -22,11 +22,11 @@ using namespace muduo::net;
 const int Connector::kMaxRetryDelayMs;
 
 Connector::Connector(EventLoop* loop, const InetAddress& serverAddr)
-  : loop_(loop),
-    serverAddr_(serverAddr),
-    connect_(false),
-    state_(kDisconnected),
-    retryDelayMs_(kInitRetryDelayMs)
+        : loop_(loop),
+          serverAddr_(serverAddr),
+          connect_(false),
+          state_(kDisconnected),
+          retryDelayMs_(kInitRetryDelayMs)
 {
   LOG_DEBUG << "ctor[" << this << "]";
 }
@@ -77,17 +77,17 @@ void Connector::stopInLoop()
 
 void Connector::connect()
 {
-  int sockfd = sockets::createNonblockingOrDie(serverAddr_.family());
-  int ret = sockets::connect(sockfd, serverAddr_.getSockAddr());
+  int sockfd = sockets::createNonblockingOrDie(serverAddr_.family());   //创建非阻塞socket
+  int ret = sockets::connect(sockfd, serverAddr_.getSockAddr());        //发起连接
   int savedErrno = (ret == 0) ? 0 : errno;
-  switch (savedErrno)
+  switch (savedErrno)//错误处理
   {
     case 0:
     case EINPROGRESS:
     case EINTR:
     case EISCONN:
       connecting(sockfd);
-      break;
+          break;
 
     case EAGAIN:
     case EADDRINUSE:
@@ -95,7 +95,7 @@ void Connector::connect()
     case ECONNREFUSED:
     case ENETUNREACH:
       retry(sockfd);
-      break;
+          break;
 
     case EACCES:
     case EPERM:
@@ -105,14 +105,14 @@ void Connector::connect()
     case EFAULT:
     case ENOTSOCK:
       LOG_SYSERR << "connect error in Connector::startInLoop " << savedErrno;
-      sockets::close(sockfd);
-      break;
+          sockets::close(sockfd);
+          break;
 
     default:
       LOG_SYSERR << "Unexpected error in Connector::startInLoop " << savedErrno;
-      sockets::close(sockfd);
-      // connectErrorCallback_();
-      break;
+          sockets::close(sockfd);
+          // connectErrorCallback_();
+          break;
   }
 }
 
@@ -131,9 +131,9 @@ void Connector::connecting(int sockfd)
   assert(!channel_);
   channel_.reset(new Channel(loop_, sockfd));
   channel_->setWriteCallback(
-      std::bind(&Connector::handleWrite, this)); // FIXME: unsafe
+          std::bind(&Connector::handleWrite, this)); // FIXME: unsafe
   channel_->setErrorCallback(
-      std::bind(&Connector::handleError, this)); // FIXME: unsafe
+          std::bind(&Connector::handleError, this)); // FIXME: unsafe
 
   // channel_->tie(shared_from_this()); is not working,
   // as channel_ is not managed by shared_ptr

@@ -32,39 +32,39 @@ using namespace muduo::net;
 
 namespace muduo
 {
-namespace net
-{
-namespace detail
-{
+    namespace net
+    {
+        namespace detail
+        {
 
-void removeConnection(EventLoop* loop, const TcpConnectionPtr& conn)
-{
-  loop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
-}
+            void removeConnection(EventLoop* loop, const TcpConnectionPtr& conn)
+            {
+              loop->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
+            }
 
-void removeConnector(const ConnectorPtr& connector)
-{
-  //connector->
-}
+            void removeConnector(const ConnectorPtr& connector)
+            {
+              //connector->
+            }
 
-}  // namespace detail
-}  // namespace net
+        }  // namespace detail
+    }  // namespace net
 }  // namespace muduo
 
 TcpClient::TcpClient(EventLoop* loop,
                      const InetAddress& serverAddr,
                      const string& nameArg)
-  : loop_(CHECK_NOTNULL(loop)),
-    connector_(new Connector(loop, serverAddr)),
-    name_(nameArg),
-    connectionCallback_(defaultConnectionCallback),
-    messageCallback_(defaultMessageCallback),
-    retry_(false),
-    connect_(true),
-    nextConnId_(1)
+        : loop_(CHECK_NOTNULL(loop)),
+          connector_(new Connector(loop, serverAddr)),
+          name_(nameArg),
+          connectionCallback_(defaultConnectionCallback),
+          messageCallback_(defaultMessageCallback),
+          retry_(false),
+          connect_(true),
+          nextConnId_(1)
 {
   connector_->setNewConnectionCallback(
-      std::bind(&TcpClient::newConnection, this, _1));
+          std::bind(&TcpClient::newConnection, this, _1));
   // FIXME setConnectFailedCallback
   LOG_INFO << "TcpClient::TcpClient[" << name_
            << "] - connector " << get_pointer(connector_);
@@ -87,7 +87,7 @@ TcpClient::~TcpClient()
     // FIXME: not 100% safe, if we are in different thread
     CloseCallback cb = std::bind(&detail::removeConnection, loop_, _1);
     loop_->runInLoop(
-        std::bind(&TcpConnection::setCloseCallback, conn, cb));
+            std::bind(&TcpConnection::setCloseCallback, conn, cb));
     if (unique)
     {
       conn->forceClose();
@@ -129,7 +129,7 @@ void TcpClient::stop()
   connector_->stop();
 }
 
-void TcpClient::newConnection(int sockfd)
+void TcpClient::newConnection(int sockfd)     //连接建立成功之后的回调函数
 {
   loop_->assertInLoopThread();
   InetAddress peerAddr(sockets::getPeerAddr(sockfd));
@@ -146,12 +146,13 @@ void TcpClient::newConnection(int sockfd)
                                           sockfd,
                                           localAddr,
                                           peerAddr));
+  //定义TcpConnection对象
 
   conn->setConnectionCallback(connectionCallback_);
   conn->setMessageCallback(messageCallback_);
   conn->setWriteCompleteCallback(writeCompleteCallback_);
   conn->setCloseCallback(
-      std::bind(&TcpClient::removeConnection, this, _1)); // FIXME: unsafe
+          std::bind(&TcpClient::removeConnection, this, _1)); // FIXME: unsafe
   {
     MutexLockGuard lock(mutex_);
     connection_ = conn;

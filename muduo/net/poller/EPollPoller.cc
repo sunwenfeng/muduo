@@ -31,15 +31,15 @@ static_assert(EPOLLHUP == POLLHUP,      "epoll uses same flag values as poll");
 
 namespace
 {
-const int kNew = -1;
-const int kAdded = 1;
-const int kDeleted = 2;
+    const int kNew = -1;
+    const int kAdded = 1;
+    const int kDeleted = 2;
 }
 
 EPollPoller::EPollPoller(EventLoop* loop)
-  : Poller(loop),
-    epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
-    events_(kInitEventListSize)
+        : Poller(loop),
+          epollfd_(::epoll_create1(EPOLL_CLOEXEC)),//epoll_create1的EPOLL_CLOEXEC表明进程退出时关闭描述符
+          events_(kInitEventListSize)
 {
   if (epollfd_ < 0)
   {
@@ -88,7 +88,7 @@ Timestamp EPollPoller::poll(int timeoutMs, ChannelList* activeChannels)
 
 void EPollPoller::fillActiveChannels(int numEvents,
                                      ChannelList* activeChannels) const
-{
+{//将就绪的events_中的活动fd填入activeChannels
   assert(implicit_cast<size_t>(numEvents) <= events_.size());
   for (int i = 0; i < numEvents; ++i)
   {
@@ -109,7 +109,7 @@ void EPollPoller::updateChannel(Channel* channel)
   Poller::assertInLoopThread();
   const int index = channel->index();
   LOG_TRACE << "fd = " << channel->fd()
-    << " events = " << channel->events() << " index = " << index;
+            << " events = " << channel->events() << " index = " << index;
   if (index == kNew || index == kDeleted)
   {
     // a new one, add with EPOLL_CTL_ADD
@@ -177,7 +177,7 @@ void EPollPoller::update(int operation, Channel* channel)
   event.data.ptr = channel;
   int fd = channel->fd();
   LOG_TRACE << "epoll_ctl op = " << operationToString(operation)
-    << " fd = " << fd << " event = { " << channel->eventsToString() << " }";
+            << " fd = " << fd << " event = { " << channel->eventsToString() << " }";
   if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)
   {
     if (operation == EPOLL_CTL_DEL)
@@ -203,6 +203,6 @@ const char* EPollPoller::operationToString(int op)
       return "MOD";
     default:
       assert(false && "ERROR op");
-      return "Unknown Operation";
+          return "Unknown Operation";
   }
 }

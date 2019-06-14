@@ -87,9 +87,16 @@ Channel的回调函数：
 | :------------------- |:----------------------------------| :-----------------------------|
 | readCallback_     | Acceptor::handleRead    | 监听描述符可写，也就是接收到新连接之后调用 |
 
+#### EventLoop
+* EventLoop是一个事件驱动器，在单线程Reactor中，由用户定义，生命期由用户控制。通过unique_ptr管理一个Poller用于IO复用。
+* 每个IO线程只能有一个EventLoop
+* EventLoop::loop() 执行EventLoop循环，首先调用Poller::poll获得当前就绪的描述符保存在activeChannels_中，然后对activeChannels_中的每个channel执行channel::handleEvent()处理不同的就绪事件。
 
-
-
+#### Poller
+* Poller类用于IO复用，muduo中有两种实现方式：一种是Poll，一种是LT模式的Epoll，一般是EventLoop的成员，生命期由其管理。
+* 用map<socket描述符, Channel*> ChannelMap保存当前Poller关心的描述符。
+* Poller::updateChannel用于更新Poller监听的套接字以及监听事件。调用关系为：
+Acceptor::listen()/TcpConnection::connectEstablished()-->Channel:: enableReading()-->Channel::update()-->EventLoop::updateChannel()-->Poller::updateChannel
 
 ***
 ### 建立连接

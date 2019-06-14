@@ -54,7 +54,10 @@ Acceptor的回调函数有：
 | :--------------------------- |:-----------------------------| :---------------------------------------------:|
 | newConnectionCallback_    | TcpServer::newConnection      | accept返回后创建TcpConnection对象管理已连接描述符 |
  #### TcpConnection
- * TcpConnection用于管理已连接描述符，在Acceptor的newConnectionCallback_回调中创建，并用shared_ptr管理，用unique_ptr管理channel，用unique_ptr通过RAII管理已连接描述符。  
+ * TcpConnection用于管理已连接描述符，在Acceptor的newConnectionCallback_回调中创建，并用shared_ptr管理，用unique_ptr管理channel，用unique_ptr通过RAII管理已连接描述符。 
+ * 构造函数建立channel对象，并设置channel的回调函数
+ * TcpConnection::connectEstablished()调用channel::enableReading()将已连接描述符加入Poller的关注列表中，并且调用connectionCallback_
+ * TcpConnection::handleRead()：描述符可读之后read，读成功调用messageCallback_，失败调用handleClose()或handleError()  
  
  TcpConnection的回调函数有：  
  

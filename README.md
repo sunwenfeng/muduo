@@ -100,7 +100,8 @@ Acceptor::listen()/TcpConnection::connectEstablished()-->Channel:: enableReading
 
 ***
 ### 建立连接
-
+基于上面的分析，muduo建立连接的过程为
+![建立连接](https://github.com/sunwenfeng/muduo/raw/master/建立连接.png)
 ***
 ### 断开连接
  

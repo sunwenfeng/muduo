@@ -59,7 +59,7 @@ Acceptor的回调函数有：
  TcpConnection的回调函数有：  
  
  | 回调函数 | 赋值  | 作用 |
-| :----------------------------- |:----------------------------------| :-----------:|
+| :------------------------------------ |:----------------------------------| :-----------:|
 | connectionCallback_    | TcpServer:: connectionCallback_      |  |
 | messageCallback_    | TcpServer:: messageCallback_    |  |
 | writeCompleteCallback_    | TcpServer:: writeCompleteCallback_     |  |

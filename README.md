@@ -38,7 +38,7 @@ Poller关注的描述符列表中。
 TcpServer中定义的回调函数有：
 
 | 回调函数 | 赋值  | 作用 |
-| :-------------------- |:------------| :------------------|
+| :------------------------ |:--------------------| :----------------------|
 | connectionCallback_    | 用户定义      | 建立新连接之后调用 |
 | messageCallback_       | 用户定义          |   收到消息后执行业务逻辑 |
 
@@ -51,7 +51,7 @@ TcpServer中定义的回调函数有：
 Acceptor的回调函数有：
 
 | 回调函数 | 赋值  | 作用 |
-| :----------------------- |:-----------------------------| :---------------------------------------------:|
+| :--------------------------- |:-----------------------------| :---------------------------------------------:|
 | newConnectionCallback_    | TcpServer::newConnection      | accept返回后创建TcpConnection对象管理已连接描述符 |
  #### TcpConnection
  * TcpConnection用于管理已连接描述符，在Acceptor的newConnectionCallback_回调中创建，并用shared_ptr管理，用unique_ptr管理channel，用unique_ptr通过RAII管理已连接描述符。  
@@ -59,7 +59,7 @@ Acceptor的回调函数有：
  TcpConnection的回调函数有：  
  
  | 回调函数 | 赋值  | 作用 |
-| :----------------------- |:----------------------------------| :-----------:|
+| :----------------------------- |:----------------------------------| :-----------:|
 | connectionCallback_    | TcpServer:: connectionCallback_      |  |
 | messageCallback_    | TcpServer:: messageCallback_    |  |
 | writeCompleteCallback_    | TcpServer:: writeCompleteCallback_     |  |

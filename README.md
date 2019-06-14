@@ -103,11 +103,15 @@ Acceptor::listen()/TcpConnection::connectEstablished()-->Channel:: enableReading
 基于上面的分析，muduo建立连接的过程为  
 
 ![建立连接](https://github.com/sunwenfeng/muduo/raw/master/建立连接.png)  
-首先用户定义TcpServer的时候就定义了Acceptor对象，并且执行了监听套接字的socket()和bind()，然后TcpServer::start()执行listen()，并将监听套接字的read事件写入到Poller的关注的描述符列表中。接下来就是上图所示的过程。
+首先用户定义TcpServer的时候就定义了Acceptor对象，并且执行了监听套接字的socket()和bind()，然后TcpServer::start()执行listen()，并将监听套接字的read事件写入到Poller的关注的描述符列表中。接下来就是上图所示的过程：  
 
-
-
-
+1. 客户端发起连接，服务端Poller检测到可写事件，调用channel::handleEvent()
+2. 由于是可写事件，channel调用readCallback_回调函数，对应Acceptor::handleRead  
+3. Acceptor::handleRead执行accept，然后执行newConnectionCallback_回调，对应TcpServer::newConnection。
+4. TcpServer::newConnection创建TcpConnection对象，并调用TcpConnection::connectEstablished
+5. 在TcpConnection::connectEstablished中，将已连接描述符加入Poller的关注列表中，并且调用connectionCallback_
+***
+### 接收数据
 
 
 ***

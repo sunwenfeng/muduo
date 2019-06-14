@@ -121,6 +121,10 @@ Acceptor::listen()/TcpConnection::connectEstablished()-->Channel:: enableReading
 4.TcpServer:: messageCallback_由用户自定义，做到了业务逻辑和网络模型相独立。
 
 ***
+### 发送数据
+
+
+***
 ### 断开连接
  ![断开连接](https://github.com/sunwenfeng/muduo/raw/master/断开连接.png)
 

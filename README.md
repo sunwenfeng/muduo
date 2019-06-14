@@ -63,7 +63,7 @@ Acceptor的回调函数有：
 | connectionCallback_    | TcpServer:: connectionCallback_      |  |
 | messageCallback_    | TcpServer:: messageCallback_    |  |
 | writeCompleteCallback_    | TcpServer:: writeCompleteCallback_     |  |
-| highWaterMarkCallback_    | TcpServer::newConnection      |  |
+| highWaterMarkCallback_    |      |  |
 | closeCallback_    | TcpServer::removeConnection    |  |
 
 

@@ -69,6 +69,26 @@ Acceptor的回调函数有：
 | highWaterMarkCallback_    |      |  |
 | closeCallback_    | TcpServer::removeConnection    |  |
 
+#### Channel
+* Channel起一个桥接作用，EventLoop作为事件驱动器，拥有Poller进行IO复用；而TcpServer通过Acceptor和TcpConnection管理Tcp连接。通过channel将这两部分连接起来，TcpServer接收到一个新连接之后，通过channel将这个新连接的socket描述符加入到Poller的关注列表。而EventLoop一直在执行循环，通过Poller监听事件，在有事件发生时再通过channel通知TcpServer进行处理。
+* 每个channel对象只负责一个文件描述符的IO事件分发，但不拥有这个事件描述符。同时channel并不能单独存在，一般是其他类的成员，生命期也就由其所属的类来管理。如Acceptor有一个channel对象以及一个socket对象，channel负责这个socket对象的IO事件分发，但并不拥有，同时他的生命期由Acceptor管理。另外一个用到channel的类就是TcpConnection类。  
+
+Channel的回调函数：  
+只有两个类用到了Channel，所以这两个类中的channel对象的回调函数的赋值方式不一样。也正是通过这种方式，channel在分发事件的时候能够区分是监听套接字还是已连接套接字。  
+
+ | 回调函数 | TcpConnection赋值方式  | 作用 |
+| :------------------- |:------------------------| :---------------------------------------------------------------------|
+| readCallback_     | TcpConnection::handleRead     | 已连接描述符有事件发生时，channel::handleEvent()根据不同的就绪事件调用 |
+| writeCallback_    | TcpConnection::handleWrite   |  |
+| closeCallback_    | TcpConnection::handleClose    |  |
+| errorCallback_    | TcpConnection::handleError     |  |  
+
+ | 回调函数 | Acceptor赋值方式  | 作用 |
+| :------------------- |:----------------------------------| :-----------------------------|
+| readCallback_     | Acceptor::handleRead    | 监听描述符可写，也就是接收到新连接之后调用 |
+
+
+
 
 
 ***

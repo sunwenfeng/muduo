@@ -122,12 +122,16 @@ Acceptor::listen()/TcpConnection::connectEstablished()-->Channel:: enableReading
 
 ***
 ### 发送数据
-
-
 ***
 ### 断开连接
  ![断开连接](https://github.com/sunwenfeng/muduo/raw/master/断开连接.png)
 
+目前只有一种关闭连接的方式，被动关闭。对端关闭连接后，read返回0，则调用TcpConnection::handleClose()关闭连接，handleClose()主要调用回调函数closeCallback_，而closeCallback_在TcpServer定义时绑定为TcpServer::removeConnection。
 
+***
+以上是单reactor服务端的实现，还应该分析多线程的实现以及客户端Connector的实现。
+***
+[muduo分析1](https://www.cnblogs.com/zfyouxi/p/5258749.html "悬停显示")  
 
+[muduo分析2](http://cyhone.com/2018/06/12/analysis-of-muduo/ "悬停显示")
 

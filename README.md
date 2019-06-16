@@ -115,10 +115,10 @@ Acceptor::listen()/TcpConnection::connectEstablished()-->Channel:: enableReading
 接收数据的流程和上述建立连接的过程基本一样，只不过处理不再是Acceptor类进行处理，而是TcpConncetion。  
 
 在建立连接的过程中已经将已连接描述符加入监听。  
-1.loop()的Poller检测得到可写事件，调用channel::handleEvent()
-2.由于是可写事件，channel调用readCallback_回调函数，对应TcpConnection::handleRead，对应
-3.TcpConnection::handleRead读取数据，并且调用读成功调用messageCallback_回调进行处理，messageCallback_对应TcpServer:: messageCallback_
-4.TcpServer:: messageCallback_由用户自定义，做到了业务逻辑和网络模型相独立。
+1. loop()的Poller检测得到可写事件，调用channel::handleEvent()
+2. 由于是可写事件，channel调用readCallback_回调函数，对应TcpConnection::handleRead，对应
+3. TcpConnection::handleRead读取数据，并且调用读成功调用messageCallback_回调进行处理，messageCallback_对应TcpServer:: messageCallback_
+4. TcpServer:: messageCallback_由用户自定义，做到了业务逻辑和网络模型相独立。
 
 ***
 ### 发送数据

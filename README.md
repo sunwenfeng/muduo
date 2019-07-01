@@ -122,6 +122,14 @@ Acceptor::listen()/TcpConnection::connectEstablished()-->Channel:: enableReading
 
 ***
 ### 发送数据
+发送数据的时候首先检查输出Buffer中是否有数据，有数据就不能直接发送了，否则会造成乱序。如果输出Buffer中没有数据，则可以直接发送，如果一次性不能
+发送完全部的数据，则将剩余的数据写入到输出Buffer中，并且将该描述符的write事件加入到Epoll的监听事件中。  
+之后同接收数据的流程一样，Epoll检测到可写之后，通过EventLoop--Channel--handleWirte()发送剩余的数据。一旦数据发送完毕，则将该描述符的写事件移除Epoll的监听事件。避免busy loop。  
+  
+ 每次只会调用一个write，因为如果第一次write没有发送完全部的数据的话，第二次调用write肯定会反水EAGIN错误（也即缓冲区满），没有必要。
+
+
+
 ***
 ### 断开连接
  ![断开连接](https://github.com/sunwenfeng/muduo/raw/master/断开连接.png)
